@@ -62,7 +62,7 @@ public class MainJ48 {
     public static void main(String[] args) throws java.lang.Exception {
         // load from arff
 
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource("/Users/macair/Documents/Kuliah/Semester 7/Pembelajaran Mesin/Tugas Besar 1/data/iris.arff");
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource("data/iris.arff");
         Instances data = source.getDataSet();
 
         // remove attribut

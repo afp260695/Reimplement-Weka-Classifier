@@ -62,7 +62,7 @@ public class MainID3 {
     public static void main(String[] args) throws java.lang.Exception {
         // load from arff
 
-        DataSource source = new DataSource("/Users/macair/Documents/Kuliah/Semester 7/Pembelajaran Mesin/Tugas Besar 1/data/iris.arff");
+        DataSource source = new DataSource("data/iris.arff");
         Instances data = source.getDataSet();
 
         // remove attribut
