@@ -1,7 +1,7 @@
 import weka.classifiers.Evaluation;
-import weka.classifiers.trees.Id3;
-import weka.core.*;
-import weka.core.converters.ConverterUtils.DataSource;
+import weka.classifiers.trees.J48;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Discretize;
 import weka.filters.unsupervised.attribute.Remove;
@@ -9,15 +9,15 @@ import weka.filters.unsupervised.instance.Resample;
 
 import java.util.Random;
 
-public class MainID3 {
+public class MainJ48 {
     private static Evaluation evalCrossValidation;
     private static Evaluation evalPrecentageSplit;
     private static Evaluation evalTrainingTest;
-    private static Id3 id3;
+    private static J48 j48;
     private static Instances dataTraining;
 
     private static void printResult() throws Exception {
-        System.out.println(id3);
+        System.out.println(j48);
         System.out.println("=============Cross Validation=============");
         System.out.println(evalCrossValidation.toSummaryString());
         System.out.println(evalCrossValidation.toClassDetailsString());
@@ -41,28 +41,28 @@ public class MainID3 {
         Instances train =  new Instances (dataTraining,0, trainSize);
         Instances test = new Instances (dataTraining, trainSize, testSize);
 
-        Id3 id3Percent = new Id3();
+        J48 j48Percent = new J48();
         train.setClassIndex(train.numAttributes() - 1);
-        id3Percent.buildClassifier(train);
+        j48Percent.buildClassifier(train);
 
         evalPrecentageSplit = new Evaluation(test);
-        evalPrecentageSplit.evaluateModel(id3Percent, test);
+        evalPrecentageSplit.evaluateModel(j48Percent, test);
 
     }
 
-    public static void saveModel(String model_name, Id3 classifiers) throws Exception {
+    public static void saveModel(String model_name, J48 classifiers) throws Exception {
         weka.core.SerializationHelper.write(model_name, classifiers);
     }
 
-    public static Id3 loadModel(String model_name) throws Exception {
-        Id3 classifiers = (Id3) weka.core.SerializationHelper.read(model_name);
+    public static J48 loadModel(String model_name) throws Exception {
+        J48 classifiers = (J48) weka.core.SerializationHelper.read(model_name);
         return classifiers;
     }
 
     public static void main(String[] args) throws java.lang.Exception {
         // load from arff
 
-        DataSource source = new DataSource("/Users/macair/Documents/Kuliah/Semester 7/Pembelajaran Mesin/Tugas Besar 1/data/iris.arff");
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource("/Users/macair/Documents/Kuliah/Semester 7/Pembelajaran Mesin/Tugas Besar 1/data/iris.arff");
         Instances data = source.getDataSet();
 
         // remove attribut
@@ -74,25 +74,22 @@ public class MainID3 {
         resample.setInputFormat(data);
         Instances dataResample = Filter.useFilter(data, resample);
 
-        Discretize discretize = new Discretize();
-        discretize.setInputFormat(dataResample);
-        Instances dataDiscritize = Filter.useFilter(dataResample, discretize);
-        dataTraining = new Instances(dataDiscritize);
+        dataTraining = new Instances(dataResample);
         dataTraining.setClassIndex( dataTraining.numAttributes() - 1);
 
         // train id3
-        id3 = new Id3();
-        dataDiscritize.setClassIndex(dataDiscritize.numAttributes() - 1);
-        id3.buildClassifier(dataDiscritize);
+        j48 = new J48();
+        dataResample.setClassIndex(dataResample.numAttributes() - 1);
+        j48.buildClassifier(dataResample);
 
         // testing model given test set
 
         // testing
-        evalTrainingTest = new Evaluation(dataDiscritize);
-        evalTrainingTest.evaluateModel(id3, dataDiscritize);
+        evalTrainingTest = new Evaluation(dataResample);
+        evalTrainingTest.evaluateModel(j48, dataResample);
 
-        evalCrossValidation = new Evaluation(dataDiscritize);
-        evalCrossValidation.crossValidateModel(id3, dataDiscritize, 10, new Random(1));
+        evalCrossValidation = new Evaluation(dataResample);
+        evalCrossValidation.crossValidateModel(j48, dataResample, 10, new Random(1));
 
         percentageSplit(60.0);
 
