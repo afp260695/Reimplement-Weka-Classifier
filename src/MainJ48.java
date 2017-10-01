@@ -14,10 +14,12 @@ public class MainJ48 {
     private static Evaluation evalPrecentageSplit;
     private static Evaluation evalTrainingTest;
     private static J48 j48;
+    private static myC45 c45;
     private static Instances dataTraining;
 
     private static void printResult() throws Exception {
-        System.out.println(j48);
+//        System.out.println(j48);
+        System.out.println(c45);
         System.out.println("=============Cross Validation=============");
         System.out.println(evalCrossValidation.toSummaryString());
         System.out.println(evalCrossValidation.toClassDetailsString());
@@ -41,12 +43,17 @@ public class MainJ48 {
         Instances train =  new Instances (dataTraining,0, trainSize);
         Instances test = new Instances (dataTraining, trainSize, testSize);
 
-        J48 j48Percent = new J48();
+//        J48 j48Percent = new J48();
+//        train.setClassIndex(train.numAttributes() - 1);
+//        j48Percent.buildClassifier(train);
+
+        myC45 c45Percent = new myC45();
         train.setClassIndex(train.numAttributes() - 1);
-        j48Percent.buildClassifier(train);
+        c45Percent.buildClassifier(train);
+
 
         evalPrecentageSplit = new Evaluation(test);
-        evalPrecentageSplit.evaluateModel(j48Percent, test);
+        evalPrecentageSplit.evaluateModel(c45Percent, test);
 
     }
 
@@ -62,7 +69,7 @@ public class MainJ48 {
     public static void main(String[] args) throws java.lang.Exception {
         // load from arff
 
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource("data/iris.arff");
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource("data/weather.nominal.arff");
         Instances data = source.getDataSet();
 
         // remove attribut
@@ -77,21 +84,27 @@ public class MainJ48 {
         dataTraining = new Instances(dataResample);
         dataTraining.setClassIndex( dataTraining.numAttributes() - 1);
 
-        // train id3
-        j48 = new J48();
+        // train j48
+//        j48 = new J48();
+//        dataResample.setClassIndex(dataResample.numAttributes() - 1);
+//        j48.buildClassifier(dataResample);
+
+        // train c45
+        c45 = new myC45();
         dataResample.setClassIndex(dataResample.numAttributes() - 1);
-        j48.buildClassifier(dataResample);
+        c45.buildClassifier(dataResample);
+
 
         // testing model given test set
 
         // testing
         evalTrainingTest = new Evaluation(dataResample);
-        evalTrainingTest.evaluateModel(j48, dataResample);
+        evalTrainingTest.evaluateModel(c45, dataResample);
 
         evalCrossValidation = new Evaluation(dataResample);
-        evalCrossValidation.crossValidateModel(j48, dataResample, 10, new Random(1));
+        evalCrossValidation.crossValidateModel(c45, dataResample, 10, new Random(1));
 
-        percentageSplit(60.0);
+        percentageSplit(90.0);
 
         printResult();
 
