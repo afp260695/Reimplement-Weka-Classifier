@@ -1,5 +1,4 @@
 import weka.classifiers.Evaluation;
-import weka.classifiers.trees.Id3;
 import weka.core.*;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
@@ -9,11 +8,11 @@ import weka.filters.unsupervised.instance.Resample;
 
 import java.util.Random;
 
-public class MainID3 {
+public class MainMyID3 {
     private static Evaluation evalCrossValidation;
     private static Evaluation evalPrecentageSplit;
     private static Evaluation evalTrainingTest;
-    private static Id3 id3;
+    private static myID3 id3;
     private static Instances dataTraining;
 
     private static void printResult() throws Exception {
@@ -41,7 +40,7 @@ public class MainID3 {
         Instances train =  new Instances (dataTraining,0, trainSize);
         Instances test = new Instances (dataTraining, trainSize, testSize);
 
-        Id3 id3Percent = new Id3();
+        myID3 id3Percent = new myID3();
         train.setClassIndex(train.numAttributes() - 1);
         id3Percent.buildClassifier(train);
 
@@ -50,12 +49,12 @@ public class MainID3 {
 
     }
 
-    public static void saveModel(String model_name, Id3 classifiers) throws Exception {
+    public static void saveModel(String model_name, myID3 classifiers) throws Exception {
         weka.core.SerializationHelper.write(model_name, classifiers);
     }
 
-    public static Id3 loadModel(String model_name) throws Exception {
-        Id3 classifiers = (Id3) weka.core.SerializationHelper.read(model_name);
+    public static myID3 loadModel(String model_name) throws Exception {
+        myID3 classifiers = (myID3) weka.core.SerializationHelper.read(model_name);
         return classifiers;
     }
 
@@ -81,7 +80,7 @@ public class MainID3 {
         dataTraining.setClassIndex( dataTraining.numAttributes() - 1);
 
         // train id3
-        id3 = new Id3();
+        id3 = new myID3();
         dataDiscritize.setClassIndex(dataDiscritize.numAttributes() - 1);
         id3.buildClassifier(dataDiscritize);
 
