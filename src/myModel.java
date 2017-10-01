@@ -204,20 +204,20 @@ public class myModel extends Classifier {
             Instance instance = instances.instance(i);
 
             if (!instance.isMissing(splitAttributeIndex)) {
-                double currentClass = instance.classValue();
-                double currentValue = instance.value(splitAttributeIndex);
-
-                if (!Utils.eq(currentClass, lastClass)) {
-                    if (lastClass == -1) {
-                        lastClass = currentClass;
-                    } else {
-                        return (currentValue + lastValue) / 2;
-                    }
-                }
-                lastValue = currentValue;
-            } else {
-                //tangani misingnya
+                resolveMissingValue(instances);
             }
+
+            double currentClass = instance.classValue();
+            double currentValue = instance.value(splitAttributeIndex);
+
+            if (!Utils.eq(currentClass, lastClass)) {
+                if (lastClass == -1) {
+                    lastClass = currentClass;
+                } else {
+                    return (currentValue + lastValue) / 2;
+                }
+            }
+            lastValue = currentValue;
         }
 
         return Double.MAX_VALUE;

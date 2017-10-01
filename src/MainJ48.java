@@ -69,7 +69,7 @@ public class MainJ48 {
     public static void main(String[] args) throws java.lang.Exception {
         // load from arff
 
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource("data/weather.nominal.arff");
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource("data/iris.arff");
         Instances data = source.getDataSet();
 
         // remove attribut
