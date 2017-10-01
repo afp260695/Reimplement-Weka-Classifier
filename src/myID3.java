@@ -41,7 +41,7 @@ public class myID3 extends Classifier {
         } else {
 
             double entropyValue = computeEntropy(data);
-
+            // Mengecek apakah semua berada dalam satu kelas
             if(Utils.eq(entropyValue,0.0D)) {
                 this.m_Attribute = null;
                 this.m_Distribution = new double[data.numClasses()];
@@ -51,6 +51,8 @@ public class myID3 extends Classifier {
 
                 this.m_ClassValue = (double)Utils.maxIndex(this.m_Distribution);
                 this.m_ClassAttribute = data.classAttribute();
+
+                // Mengecek apakah atrribut nya tinggal kelas saja
             } else if(data.numAttributes() == 1) {
                 this.m_Attribute = null;
                 this.m_Distribution = new double[data.numClasses()];
@@ -67,6 +69,8 @@ public class myID3 extends Classifier {
                 double[] infoGains = new double[data.numAttributes()];
 
                 Attribute att;
+
+                // Menghitung information gain tiap attribut
                 for(Enumeration attEnum = data.enumerateAttributes(); attEnum.hasMoreElements(); infoGains[att.index()] = this.computeInfoGain(data, att)) {
                     att = (Attribute)attEnum.nextElement();
                 }
@@ -80,6 +84,7 @@ public class myID3 extends Classifier {
 
                 for(int j = 0; j < this.m_Attribute.numValues(); ++j) {
                     rm.setInputFormat(splitData[j]);
+                    // Menghapus attribut yang memiliki information gain yang paling besar, agar tidak dihitung di iterasi selanjutnya
                     Instances instances = Filter.useFilter(splitData[j],rm);
                     this.m_Successors[j] = new myID3();
                     this.m_Successors[j].makeTree(instances);
