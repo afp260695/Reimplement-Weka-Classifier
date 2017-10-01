@@ -1,5 +1,6 @@
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 import weka.filters.Filter;
@@ -19,7 +20,7 @@ public class MainJ48 {
 
     private static void printResult() throws Exception {
 //        System.out.println(j48);
-        System.out.println(c45);
+        System.out.println("c45 - Irish");
         System.out.println("=============Cross Validation=============");
         System.out.println(evalCrossValidation.toSummaryString());
         System.out.println(evalCrossValidation.toClassDetailsString());
@@ -43,17 +44,17 @@ public class MainJ48 {
         Instances train =  new Instances (dataTraining,0, trainSize);
         Instances test = new Instances (dataTraining, trainSize, testSize);
 
-//        J48 j48Percent = new J48();
-//        train.setClassIndex(train.numAttributes() - 1);
-//        j48Percent.buildClassifier(train);
-
-        myC45 c45Percent = new myC45();
+        J48 j48Percent = new J48();
         train.setClassIndex(train.numAttributes() - 1);
-        c45Percent.buildClassifier(train);
+        j48Percent.buildClassifier(train);
+
+//        myC45 c45Percent = new myC45();
+//        train.setClassIndex(train.numAttributes() - 1);
+//        c45Percent.buildClassifier(train);
 
 
         evalPrecentageSplit = new Evaluation(test);
-        evalPrecentageSplit.evaluateModel(c45Percent, test);
+        evalPrecentageSplit.evaluateModel(j48Percent, test);
 
     }
 
@@ -85,30 +86,42 @@ public class MainJ48 {
         dataTraining.setClassIndex( dataTraining.numAttributes() - 1);
 
         // train j48
-//        j48 = new J48();
-//        dataResample.setClassIndex(dataResample.numAttributes() - 1);
-//        j48.buildClassifier(dataResample);
+        j48 = new J48();
+        dataResample.setClassIndex(dataResample.numAttributes() - 1);
+        j48.buildClassifier(dataResample);
 
         // train c45
-        c45 = new myC45();
-        dataResample.setClassIndex(dataResample.numAttributes() - 1);
-        c45.buildClassifier(dataResample);
-
+//        c45 = new myC45();
+//        dataResample.setClassIndex(dataResample.numAttributes() - 1);
+//        c45.buildClassifier(dataResample);
 
         // testing model given test set
 
+
+
         // testing
         evalTrainingTest = new Evaluation(dataResample);
-        evalTrainingTest.evaluateModel(c45, dataResample);
+        evalTrainingTest.evaluateModel(j48, dataResample);
 
         evalCrossValidation = new Evaluation(dataResample);
-        evalCrossValidation.crossValidateModel(c45, dataResample, 10, new Random(1));
+        evalCrossValidation.crossValidateModel(j48, dataResample, 10, new Random(1));
 
         percentageSplit(80.0);
 
         printResult();
 
-        // input data
+        //Creating a double array and defining values
+        double[] attValues = {5.1,3.5,1.4,0.2};
+        //Create the new instance unseen
+        Instance unseen = new Instance(1.0, attValues);
+        //Add the instance to the dataset (Instances) (first element 0)
+        dataResample.add(unseen);
+        //Define class attribute position
+        dataResample.setClassIndex(dataResample.numAttributes()-1);
+        //classify class of the unseen
+        double newClass = j48.classifyInstance(dataResample.instance(0));
+
+        System.out.println("the unseen class : " + newClass);
 
     }
 }
