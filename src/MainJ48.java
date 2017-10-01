@@ -104,7 +104,7 @@ public class MainJ48 {
         evalCrossValidation = new Evaluation(dataResample);
         evalCrossValidation.crossValidateModel(c45, dataResample, 10, new Random(1));
 
-        percentageSplit(90.0);
+        percentageSplit(80.0);
 
         printResult();
 

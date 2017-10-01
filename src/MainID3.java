@@ -94,7 +94,7 @@ public class MainID3 {
         evalCrossValidation = new Evaluation(dataDiscritize);
         evalCrossValidation.crossValidateModel(id3, dataDiscritize, 10, new Random(1));
 
-        percentageSplit(60.0);
+        percentageSplit(80.0);
 
         printResult();
 
